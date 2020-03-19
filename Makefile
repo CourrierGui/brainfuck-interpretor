@@ -1,2 +1,2 @@
 all:
-	g++ main.cpp -o build/brainfuck-interpretor
+	g++ main.cpp -o build/bf
