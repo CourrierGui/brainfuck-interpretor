@@ -18,7 +18,6 @@ class Parser {
       char c;
 
       std::ifstream bf_file(input_file);
-      //TODO: gérer les commentaires
       bool comments = false;
       while (bf_file >> std::noskipws >> c) {
         if (c == '#') {
@@ -110,20 +109,17 @@ class BFInterpretor {
           break;
         case '[':
           if (!*m_ptr) {
-            //TODO: move after the matching ]
             next_match();
           }
           else ++m_inst_ptr;
           break;
         case ']':
           if (*m_ptr) {
-            //TODO: move after the matching [
             previous_match();
           }
           else ++m_inst_ptr;
           break;
         default:
-          //TODO: gérer les erreurs de syntaxe
           throw InvalidSyntax{.c = c};
           break;
       }
