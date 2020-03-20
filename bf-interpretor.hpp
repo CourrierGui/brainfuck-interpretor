@@ -7,19 +7,27 @@
 
 struct InvalidSyntax {
   char c;
+  int line, col;
 };
 
 class Parser {
   private:
     std::vector<char> m_inst;
+    std::array<char, 8> values = {'>', '<', '-', '+', '.', ',', '[', ']'};
 
   public:
     Parser(const std::string& input_file) {
       char c;
+      int line(1), col(1);
 
       std::ifstream bf_file(input_file);
       bool comments = false;
       while (bf_file >> std::noskipws >> c) {
+        ++col;
+        if (c == '\n') {
+          col = 0;
+          ++line;
+        }
         if (c == '#') {
           comments = true;
           continue;
@@ -27,10 +35,15 @@ class Parser {
         if (comments && c == '\n') {
           comments = false;
           continue;
-        } else if (comments) continue;
+        }
+        else if (comments) continue;
 
         if (c == '\n' || c == ' ') continue;
-        m_inst.push_back(c);
+        if (std::find(values.begin(), values.end(), c) != values.end())
+          m_inst.push_back(c);
+        else {
+          throw InvalidSyntax{.c = c, .line = line, .col = col};
+        }
       }
     }
 
@@ -42,11 +55,10 @@ class Parser {
 class BFInterpretor {
   private:
     using instruction_type = std::vector<char>;
-    using buffer_type = std::array<int, 30000>;
+    using buffer_type = std::array<char, 30000>;
 
     buffer_type m_buffer;
     buffer_type::iterator m_ptr;
-    bool log;
 
     instruction_type m_inst;
     instruction_type::iterator m_inst_ptr;
@@ -54,33 +66,33 @@ class BFInterpretor {
   public:
     BFInterpretor(const std::string& input_file)
       : m_buffer({0}),
-        m_ptr(m_buffer.begin()),
-        log(false) {
+      m_ptr(m_buffer.begin()) {
 
-      Parser parser(input_file);
-      m_inst = parser.get_instructions();
-      m_inst_ptr = m_inst.begin();
-    }
+        try {
+          Parser parser(input_file);
+          m_inst = parser.get_instructions();
+          m_inst_ptr = m_inst.begin();
+        } catch(const InvalidSyntax& e) {
+          throw e;
+        }
+      }
 
-    void start() {
+    void start() noexcept {
       while (m_inst_ptr != m_inst.end()) {
-        /* std::clog << "c0: " << m_buffer[0] << " c1: " << m_buffer[1] << '\n'; */
-        /* std::clog << *m_inst_ptr << '\n'; */
         try {
           step(*m_inst_ptr);
         } catch(const InvalidSyntax& e) {
           std::cerr << "\n\nInvalid syntax at instruction "
             << std::distance(m_inst.begin(), m_inst_ptr)
             << " got "
-            << *m_inst_ptr
+            << e.c
             << '\n';
           return;
         }
       }
-      if (log) std::cout << '\n';
     }
 
-    void step(const char c) {
+    void step(const char c) noexcept {
       switch (c) {
         case '>':
           ++m_ptr;
@@ -101,7 +113,6 @@ class BFInterpretor {
         case '.':
           std::cout << *m_ptr;
           ++m_inst_ptr;
-          if (!log) log = true;
           break;
         case ',':
           std::cin >> *m_ptr;
@@ -120,12 +131,11 @@ class BFInterpretor {
           else ++m_inst_ptr;
           break;
         default:
-          throw InvalidSyntax{.c = c};
           break;
       }
     }
 
-    void next_match() {
+    void next_match() noexcept {
       int count = 1;
       while (true) {
         ++m_inst_ptr;
@@ -140,7 +150,7 @@ class BFInterpretor {
       }
     }
 
-    void previous_match() {
+    void previous_match() noexcept {
       int count = 1;
       while (true) {
         --m_inst_ptr;

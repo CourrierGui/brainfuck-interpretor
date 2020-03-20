@@ -17,18 +17,16 @@ Parser	bf-interpretor.hpp	/^class Parser {$/;"	c
 SOURCE_EXTENSIONS	.ycm_extra_conf.py	/^SOURCE_EXTENSIONS = [ '.C', '.cpp', '.cxx', '.cc', '.c', '.m', '.mm' ]$/;"	v
 Settings	.ycm_extra_conf.py	/^def Settings( **kwargs ):$/;"	f
 c	bf-interpretor.hpp	/^  char c;$/;"	m	struct:InvalidSyntax
+col	bf-interpretor.hpp	/^  int line, col;$/;"	m	struct:InvalidSyntax
 compilation_database_folder	.ycm_extra_conf.py	/^compilation_database_folder = ''$/;"	v
 database	.ycm_extra_conf.py	/^  database = None$/;"	v
 database	.ycm_extra_conf.py	/^  database = ycm_core.CompilationDatabase( compilation_database_folder )$/;"	v
 flags	.ycm_extra_conf.py	/^flags = [$/;"	v
 get_instructions	bf-interpretor.hpp	/^    std::vector<char> get_instructions() {$/;"	f	class:Parser
-log	bf-interpretor.hpp	/^    bool log;$/;"	m	class:BFInterpretor
+line	bf-interpretor.hpp	/^  int line, col;$/;"	m	struct:InvalidSyntax
 m_inst	bf-interpretor.hpp	/^    instruction_type m_inst;$/;"	m	class:BFInterpretor
 m_inst	bf-interpretor.hpp	/^    std::vector<char> m_inst;$/;"	m	class:Parser
 m_inst_ptr	bf-interpretor.hpp	/^    instruction_type::iterator m_inst_ptr;$/;"	m	class:BFInterpretor
 m_ptr	bf-interpretor.hpp	/^    buffer_type::iterator m_ptr;$/;"	m	class:BFInterpretor
 main	main.cpp	/^int main(int argc, char** argv) {$/;"	f
-next_match	bf-interpretor.hpp	/^    void next_match() {$/;"	f	class:BFInterpretor
-previous_match	bf-interpretor.hpp	/^    void previous_match() {$/;"	f	class:BFInterpretor
-start	bf-interpretor.hpp	/^    void start() {$/;"	f	class:BFInterpretor
-step	bf-interpretor.hpp	/^    void step(const char c) {$/;"	f	class:BFInterpretor
+values	bf-interpretor.hpp	/^    std::array<char, 8> values = {'>', '<', '-', '+', '.', ',', '[', ']'};$/;"	m	class:Parser
