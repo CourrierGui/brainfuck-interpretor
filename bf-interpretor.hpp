@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <algorithm>
 
 struct InvalidSyntax {
   char c;
@@ -18,7 +19,18 @@ class Parser {
 
       std::ifstream bf_file(input_file);
       //TODO: gérer les commentaires
+      bool comments = false;
       while (bf_file >> std::noskipws >> c) {
+        if (c == '#') {
+          comments = true;
+          continue;
+        }
+        if (comments && c == '\n') {
+          comments = false;
+          continue;
+        } else if (comments) continue;
+
+        if (c == '\n' || c == ' ') continue;
         m_inst.push_back(c);
       }
     }
@@ -35,6 +47,7 @@ class BFInterpretor {
 
     buffer_type m_buffer;
     buffer_type::iterator m_ptr;
+    bool log;
 
     instruction_type m_inst;
     instruction_type::iterator m_inst_ptr;
@@ -42,7 +55,8 @@ class BFInterpretor {
   public:
     BFInterpretor(const std::string& input_file)
       : m_buffer({0}),
-        m_ptr(m_buffer.begin()) {
+        m_ptr(m_buffer.begin()),
+        log(false) {
 
       Parser parser(input_file);
       m_inst = parser.get_instructions();
@@ -51,10 +65,20 @@ class BFInterpretor {
 
     void start() {
       while (m_inst_ptr != m_inst.end()) {
-        std::clog << "c0: " << m_buffer[0] << " c1: " << m_buffer[1] << '\n';
-        std::clog << *m_inst_ptr << '\n';
-        step(*m_inst_ptr);
+        /* std::clog << "c0: " << m_buffer[0] << " c1: " << m_buffer[1] << '\n'; */
+        /* std::clog << *m_inst_ptr << '\n'; */
+        try {
+          step(*m_inst_ptr);
+        } catch(const InvalidSyntax& e) {
+          std::cerr << "\n\nInvalid syntax at instruction "
+            << std::distance(m_inst.begin(), m_inst_ptr)
+            << " got "
+            << *m_inst_ptr
+            << '\n';
+          return;
+        }
       }
+      if (log) std::cout << '\n';
     }
 
     void step(const char c) {
@@ -76,8 +100,9 @@ class BFInterpretor {
           ++m_inst_ptr;
           break;
         case '.':
-          std::cout << c;
+          std::cout << *m_ptr;
           ++m_inst_ptr;
+          if (!log) log = true;
           break;
         case ',':
           std::cin >> *m_ptr;
