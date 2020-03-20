@@ -79,16 +79,7 @@ class BFInterpretor {
 
     void start() noexcept {
       while (m_inst_ptr != m_inst.end()) {
-        try {
-          step(*m_inst_ptr);
-        } catch(const InvalidSyntax& e) {
-          std::cerr << "\n\nInvalid syntax at instruction "
-            << std::distance(m_inst.begin(), m_inst_ptr)
-            << " got "
-            << e.c
-            << '\n';
-          return;
-        }
+        step(*m_inst_ptr);
       }
     }
 
