@@ -1,3 +1,1 @@
-Usage:
-
-    bl <filename>
+Usage: bl <filename>

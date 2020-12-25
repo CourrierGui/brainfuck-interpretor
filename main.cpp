@@ -24,10 +24,11 @@ int main(int argc, char** argv) {
   }
 
   try {
-    BFInterpretor bfi(input_file);
+    BFInterpretor bfi{input_file};
     bfi.start();
   } catch(const InvalidSyntax& e) {
-    std::cerr << "ParserError: InvalidSyntax: line "
+    std::cerr
+      << "ParserError: InvalidSyntax: line "
       << e.line
       << ", col "
       << e.col
