@@ -2,4 +2,4 @@ build
 *.swp
 *.swo
 *.coredump
-tags
+tags*
